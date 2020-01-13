@@ -37,16 +37,17 @@ module.exports = {
         return inquirer.prompt(questions);
     },
     askForResource: () => {
+        const message = 'Please enter your desired Manifold resource name:';
         const questions = [
             {
                 type: 'text',
                 name: 'manifoldResource',
-                message: 'Please your desired Manifold resource name.',
+                message,
                 validate: value => {
                     if (value.length) {
                         return true;
                     } else {
-                        return 'Please enter a name for the repository.';
+                        return message;
                     }
                 }
             }

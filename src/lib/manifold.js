@@ -7,7 +7,8 @@ const askForResource = () => {
     return new Promise((resolve, reject) => {
         exec('manifold list', async (code, stdout, stderr) => {
             if (stderr !== '')
-                reject(stderr);
+                return reject(stderr);
+            console.log(stdout)
             const { manifoldResource } = await form.askForResource();
             resolve(manifoldResource);
         })

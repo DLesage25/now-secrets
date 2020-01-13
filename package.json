@@ -7,6 +7,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node src/index.js"
     },
+    "bin": {
+        "now-secrets": "./src/index.js"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/DLesage25/now-secrets.git"
