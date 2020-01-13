@@ -6,14 +6,14 @@ module.exports = {
         const questions = [
             {
                 type: 'list',
-                name: 'ignore',
+                name: 'selectedFlow',
                 message: 'Please select an option:',
                 choices: [
-                    'Import from NOW into .env file',
-                    'Import from manifold into .env file',
-                    'Update NOW from .env file',
-                    'Update manifold from .env file',
-                    'Update NOW from manifold (Beta)'
+                    '1. Import from Now into .env file',
+                    '2. Import from Manifold into .env file',
+                    '3. Update Now from .env file',
+                    '4. Update manifold from .env file',
+                    '5. Update Now from Manifold (Beta)'
                 ]
             }
         ];
