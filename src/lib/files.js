@@ -5,8 +5,10 @@ module.exports = {
     getCurrentDirectoryBase: () => {
         return path.basename(process.cwd());
     },
-
     directoryExists: filePath => {
         return fs.existsSync(filePath);
+    },
+    createReplaceFile: name => {
+        return fs.openSync(name, 'w');
     }
 };
