@@ -35,5 +35,22 @@ module.exports = {
             }
         ];
         return inquirer.prompt(questions);
+    },
+    askForResource: () => {
+        const questions = [
+            {
+                type: 'text',
+                name: 'manifoldResource',
+                message: 'Please your desired Manifold resource name.',
+                validate: value => {
+                    if (value.length) {
+                        return true;
+                    } else {
+                        return 'Please enter a name for the repository.';
+                    }
+                }
+            }
+        ];
+        return inquirer.prompt(questions);
     }
 };
