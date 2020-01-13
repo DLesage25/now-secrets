@@ -1,0 +1,35 @@
+{
+    "name": "now-secrets",
+    "version": "1.0.0",
+    "description": "Simple CLI tool for interacting with Zeit-Now's 2.0 secrets",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DLesage25/now-secrets.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/DLesage25/now-secrets/issues"
+    },
+    "homepage": "https://github.com/DLesage25/now-secrets#readme",
+    "dependencies": {
+        "chalk": "^3.0.0",
+        "clear": "^0.1.0",
+        "clui": "^0.3.6",
+        "conf": "^6.2.0",
+        "configstore": "^5.0.0",
+        "figlet": "^1.2.4",
+        "inquirer": "^7.0.3",
+        "lodash": "^4.17.15",
+        "minimist": "^1.2.0",
+        "touch": "^3.1.0"
+    },
+    "devDependencies": {
+        "eslint": "^6.8.0"
+    }
+}
