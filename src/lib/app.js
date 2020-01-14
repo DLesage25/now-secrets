@@ -1,5 +1,6 @@
 const now = require('./now');
 const manifold = require('./manifold');
+const { successLog, errorLog } = require('./utils');
 
 module.exports = {
     ImportFromManifoldIntoEnvFile: async () => {
@@ -7,9 +8,21 @@ module.exports = {
             await manifold.login();
             await manifold.switchToProdEnv();
             await manifold.writeEnvsToFileFromManifold();
+            successLog('Imported envs from Manifold successfully');
             return true;
         } catch (err) {
-            return err;
+            return errorLog(err);
+        }
+    },
+    UpdateManifoldFromEnvFile: async () => {
+        try {
+            await manifold.login();
+            await manifold.switchToProdEnv();
+            await manifold.writeEnvsToManifoldFromFile();
+            successLog('Updated Manifold envs from local file');
+            return true;
+        } catch (err) {
+            return errorLog(err);
         }
     },
     ImportFromNowIntoEnvFile: async () => {

@@ -16,7 +16,7 @@ module.exports = {
             const literalPath = `${process.cwd()}/${filePath}`;
             fs.writeFile(literalPath, data, (err) => {
                 if (err) {
-                    reject({error: `Error while writting on ${filePath}: ${err}`});
+                    reject(`Error while writting on ${filePath}: ${err}`);
                 }
                 resolve(true);
             });
@@ -24,10 +24,10 @@ module.exports = {
     },
     readFile: async (filePath) => {
         return new Promise((resolve, reject) => {
-            fs.readFile(filePath, "utf8", (err, data) => {
+            const literalPath = `${process.cwd()}/${filePath}`;
+            fs.readFile(literalPath, "utf8", (err, data) => {
                 if (err) {
-                    console.log(`Error while reading ${filePath}: ${err}`);
-                    reject(err);
+                    reject(`Error while reading ${filePath}: ${err}`);
                 }
                 resolve(data)
             });

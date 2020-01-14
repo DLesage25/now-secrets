@@ -2,16 +2,20 @@ const { exec, spawn } = require('child_process');
 
 const { writeFile, readFile } = require('./files');
 const form = require('./form');
-const { warningLog, successLog, errorLog } = require('./utils');
+const { warningLog, successLog, loader } = require('./utils');
 
 const askForResource = () => {
     return new Promise((resolve, reject) => {
-        exec('manifold list', async (code, stdout, stderr) => {
-            if (stderr !== '')
-                return reject(stderr);
-            console.log(stdout)
+        const list = spawn('manifold', ['list'], { stdio: 'pipe' });
+        const loading = new loader('Getting available resources from Manifold', list)
+
+        list.stdout.on('data', async (data) => {
+            loading.end('Finished getting available resources')
             const { manifoldResource } = await form.askForResource();
             resolve(manifoldResource);
+        })
+        list.stderr.on('data', (data) => {
+            reject(data);
         })
     })
 }
@@ -33,6 +37,8 @@ module.exports = {
             warningLog('Logging into Manifold')
             // we need to pipe any error coming from Manifold
             // so for us to have access to its data
+            // if we don't pipe it then, on('data') would always be
+            // falsy
             // stdio: [stdin, stdout, err]
             const loggedIn = spawn('manifold', ['login'], { stdio: ['inherit', 'inherit', 'pipe'] });
 
@@ -42,7 +48,7 @@ module.exports = {
                     successLog('Logged into Manifold successfully')
                     return resolve(true);
                 }
-                reject({error: 'Failed logging into Manifold'})
+                reject('Failed logging into Manifold')
             });
 
             loggedIn.on('close', (code) => {
@@ -58,21 +64,27 @@ module.exports = {
             warningLog('Switching to PartnerHero\'s environment')
             exec('manifold switch partnerhero', (code, stdout, stderr) => {
                 if (stderr !== '')
-                    reject({error: stderr});
+                    reject(stderr);
                 successLog('Switched to PartnerHero\'s snvironment successfully')
                 resolve(true);
             })
         })
     },
     writeEnvsToFileFromManifold: async () => {
-        const { pathName } = await form.askForPath('Please enter the path you would like your env file to be stored at (including file name):');
+        const { pathName } = await form.askForPath('Please enter the path you would like your env file to be stored at (including file name):', '.env');
         return new Promise((resolve, reject) => {
             exec('manifold export', async (code, stdout, stderr) => {
                 if (stderr !== '')
-                    reject({error: stderr});
+                    reject(stderr);
+
+                const cleansedExport = 
+                    stdout
+                    .split('\n')
+                    .filter(env => env !== '').
+                    join('\n');
                 
                 try {
-                    await writeFile(pathName, stdout)
+                    await writeFile(pathName, cleansedExport)
                     resolve(true);
                 } catch (error) {
                     reject(error);
@@ -80,19 +92,21 @@ module.exports = {
             })
         })
     },
-    writeEnvsToManifoldFromFile: (filePath) => {
+    writeEnvsToManifoldFromFile: async () => {
+        const { pathName } = await form.askForPath('Please enter the path of the file you would like us to get envs from:', '.env');
         return new Promise(async (resolve, reject) => {
             try {
-                const envs = await readFile(filePath);
+                const envs = await readFile(pathName);
                 const resource = await askForResource();
                 //converting to array and filtering out comments
                 const filteredOutEnvs = envs.split('\n').filter(string => string.charAt(0) !== '#');
                 await Promise.all(filteredOutEnvs.map(env => {
                     return addEnvToResource(env, resource);
                 }))
+                successLog(`Wrote ${filteredOutEnvs.length} envs into ${resource} successfully`)
                 resolve(true);
-            } catch (err) {
-                reject(err);
+            } catch (error) {
+                reject(error);
             }
         })
     }

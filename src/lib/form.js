@@ -1,5 +1,13 @@
 const inquirer = require('inquirer');
 
+const validate = (value) => {
+    if (value.length) {
+        return true;
+    } else {
+        return 'Please check your input value.';
+    }
+}
+
 module.exports = {
     mainMenu: () => {
         const questions = [
@@ -11,7 +19,7 @@ module.exports = {
                     '1. Import from Now into .env file',
                     '2. Import from Manifold into .env file',
                     '3. Update Now from .env file',
-                    '4. Update manifold from .env file',
+                    '4. Update Manifold from .env file',
                     '5. Update Now from Manifold (Beta)'
                 ]
             }
@@ -24,31 +32,19 @@ module.exports = {
                 type: 'password',
                 name: 'nowToken',
                 message: 'Please enter a Now API token',
-                validate: value => {
-                    if (value.length) {
-                        return true;
-                    } else {
-                        return 'Please enter a name for the repository.';
-                    }
-                }
+                validate
             }
         ];
         return inquirer.prompt(questions);
     },
-    askForPath: (message) => {
+    askForPath: (message, defaultPath) => {
         const questions = [
             {
                 type: 'text',
                 name: 'pathName',
                 message,
-                validate: value => {
-                    if (value.length) {
-                        return true;
-                    } else {
-                        return message;
-                    }
-                },
-                default: '.env'
+                validate,
+                default: defaultPath
             }
         ];
         return inquirer.prompt(questions);
@@ -60,13 +56,7 @@ module.exports = {
                 type: 'text',
                 name: 'manifoldResource',
                 message,
-                validate: value => {
-                    if (value.length) {
-                        return true;
-                    } else {
-                        return message;
-                    }
-                }
+                validate
             }
         ];
         return inquirer.prompt(questions);
