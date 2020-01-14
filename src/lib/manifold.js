@@ -2,6 +2,7 @@ const { exec, spawn } = require('child_process');
 
 const { writeFile, readFile } = require('./files');
 const form = require('./form');
+const { warningLog, successLog, errorLog } = require('./utils');
 
 const askForResource = () => {
     return new Promise((resolve, reject) => {
@@ -18,7 +19,7 @@ const askForResource = () => {
 const addEnvToResource = (env, resource) => {
     const [envName, envValue] = env.split('=');
     return new Promise((resolve, reject) => {
-        exec(`manifold config set ${envName}=${envValue} --resource ${resource}`, async (code, stdout, stderr) => {
+        exec(`manifold config set ${envName}=${envValue} --resource ${resource}`, (code, stdout, stderr) => {
             if (stderr !== '')
                 reject(stderr);
             resolve(true);
@@ -29,12 +30,27 @@ const addEnvToResource = (env, resource) => {
 module.exports = {
     login: () => {
         return new Promise((resolve) => {
-            const loggedIn = spawn('manifold', ['login'], { stdio: 'inherit' });
-            loggedIn.on('close', () => {
-                //we are always resolving true
-                //because if the log in process fails then
-                //manifold breaks the flow itself
-                resolve(true)
+            warningLog('Logging into Manifold')
+            // we need to pipe any error coming from Manifold
+            // so for us to have access to its data
+            // stdio: [stdin, stdout, err]
+            const loggedIn = spawn('manifold', ['login'], { stdio: ['inherit', 'inherit', 'pipe'] });
+
+            loggedIn.stderr.on('data', (data) => {
+                const successMessageFromManifold = 'You\'re already logged in!\n';
+                if (data.toString() == successMessageFromManifold) {
+                    successLog('Logged into Manifold successfully')
+                    return resolve(true);
+                }
+                errorLog('Failed logging into Manifold')
+                resolve(false)
+            });
+
+            loggedIn.on('close', (code) => {
+                if (code === 0) {
+                    successLog('Logged into Manifold successfully')
+                    resolve(true)
+                }
             });
         });
     },
