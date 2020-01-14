@@ -5,7 +5,6 @@ const clear = require('clear');
 const figlet = require('figlet');
 
 const form = require('./lib/form');
-const now = require('./lib/now');
 const utils = require('./lib/utils');
 const app = require('./lib/app');
 
@@ -23,11 +22,10 @@ console.log(
 const main = async () => {
     let { selectedFlow } = await form.mainMenu();
     selectedFlow = utils.camelize(selectedFlow);
-
-    await app[selectedFlow]();
-
-    // let token = await now.getNowToken();
-    // console.log(token);
+    const process = await app[selectedFlow]();
+    if (!process)
+        return utils.errorLog('Execution Failed')
+    return utils.successLog('Execution finished successfully')
 };
 
 main();
