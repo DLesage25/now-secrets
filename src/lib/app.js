@@ -1,11 +1,17 @@
-const { spawn } = require('child_process');
 const now = require('./now');
+const manifold = require('./manifold');
 
 module.exports = {
-    CheckIfLoggedIn: () => {
-        return new Promise((resolve, reject) => {});
+    ImportFromManifoldIntoEnvFile: async () => {
+        try {
+            await manifold.login();
+            await manifold.switchToProdEnv();
+            await manifold.writeEnvsToFileFromManifold();
+            return true;
+        } catch (err) {
+            return err;
+        }
     },
-
     ImportFromNowIntoEnvFile: async () => {
         const isLogged = await now.checkForAuthentication();
 

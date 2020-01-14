@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const files = require('./files');
 
 module.exports = {
     mainMenu: () => {
@@ -32,6 +31,24 @@ module.exports = {
                         return 'Please enter a name for the repository.';
                     }
                 }
+            }
+        ];
+        return inquirer.prompt(questions);
+    },
+    askForPath: (message) => {
+        const questions = [
+            {
+                type: 'text',
+                name: 'pathName',
+                message,
+                validate: value => {
+                    if (value.length) {
+                        return true;
+                    } else {
+                        return message;
+                    }
+                },
+                default: '.env'
             }
         ];
         return inquirer.prompt(questions);

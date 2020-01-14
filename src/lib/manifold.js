@@ -29,7 +29,7 @@ const addEnvToResource = (env, resource) => {
 
 module.exports = {
     login: () => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             warningLog('Logging into Manifold')
             // we need to pipe any error coming from Manifold
             // so for us to have access to its data
@@ -42,8 +42,7 @@ module.exports = {
                     successLog('Logged into Manifold successfully')
                     return resolve(true);
                 }
-                errorLog('Failed logging into Manifold')
-                resolve(false)
+                reject({error: 'Failed logging into Manifold'})
             });
 
             loggedIn.on('close', (code) => {
@@ -56,24 +55,27 @@ module.exports = {
     },
     switchToProdEnv: () => {
         return new Promise((resolve, reject) => {
+            warningLog('Switching to PartnerHero\'s environment')
             exec('manifold switch partnerhero', (code, stdout, stderr) => {
                 if (stderr !== '')
-                    reject(stderr);
+                    reject({error: stderr});
+                successLog('Switched to PartnerHero\'s snvironment successfully')
                 resolve(true);
             })
         })
     },
-    writeEnvsToFileFromManifold: (filePath) => {
+    writeEnvsToFileFromManifold: async () => {
+        const { pathName } = await form.askForPath('Please enter the path you would like your env file to be stored at (including file name):');
         return new Promise((resolve, reject) => {
             exec('manifold export', async (code, stdout, stderr) => {
                 if (stderr !== '')
-                    reject(stderr);
+                    reject({error: stderr});
                 
                 try {
-                    await writeFile(filePath, stdout)
+                    await writeFile(pathName, stdout)
                     resolve(true);
-                } catch (err) {
-                    reject(err);
+                } catch (error) {
+                    reject(error);
                 }
             })
         })

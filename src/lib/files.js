@@ -13,10 +13,10 @@ module.exports = {
     },
     writeFile: async (filePath, data) => {
         return new Promise((resolve, reject) => {
-            fs.writeFile(filePath, data, (err) => {
+            const literalPath = `${process.cwd()}/${filePath}`;
+            fs.writeFile(literalPath, data, (err) => {
                 if (err) {
-                    console.log(`Error while writting on ${filePath}: ${err}`);
-                    reject(err);
+                    reject({error: `Error while writting on ${filePath}: ${err}`});
                 }
                 resolve(true);
             });
