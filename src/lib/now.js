@@ -4,10 +4,11 @@ const Conf = require('conf');
 const config = new Conf();
 const chalk = require('chalk');
 
+const { spawn } = require('child_process');
+
 // const Spinner = CLI.Spinner;
 
 const form = require('./form');
-// const pkg = require('../package.json');
 
 // const status = new Spinner('Authenticating you, please wait...');
 
@@ -22,18 +23,27 @@ const form = require('./form');
 //     }
 // };
 
-const authenticationFlow = async () => {
-    const tokenPresent = checkForNowToken();
-
-    if (tokenPresent) return true;
-    else {
-        let { nowToken } = await form.askForNowToken();
-        setNowToken(nowToken);
-    }
+const getAllNowTokens = async () => {
+    return true;
 };
 
-const checkForNowToken = () => {
-    return !!config.get('now.token');
+const checkForAuthentication = async () => {
+    const token = await checkForNowToken();
+    return new Promise(resolve => {
+        spawn('now', ['ls', '-t', token]).on('exit', code =>
+            resolve(code === 0)
+        );
+    });
+};
+
+const checkForNowToken = async () => {
+    const token = config.get('now.token');
+
+    if (!token) {
+        let { nowToken } = await form.askForNowToken();
+        setNowToken(nowToken);
+        return nowToken;
+    } else return token;
 };
 
 const getNowToken = () => {
@@ -61,5 +71,6 @@ module.exports = {
     getAccessToken,
     removeAccessToken,
     setNowToken,
-    authenticationFlow
+    checkForAuthentication,
+    getAllNowTokens
 };
