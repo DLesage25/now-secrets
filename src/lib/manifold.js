@@ -77,6 +77,7 @@ module.exports = {
                 if (stderr !== '')
                     reject(stderr);
 
+                // preventing the export to have unnecessary line breaks
                 const cleansedExport = 
                     stdout
                     .split('\n')
