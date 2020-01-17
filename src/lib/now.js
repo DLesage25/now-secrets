@@ -1,29 +1,13 @@
-const CLI = require('clui');
 const Conf = require('conf');
 
 const config = new Conf();
 
-const { warningLog, parseFromEnvFile } = require('./utils');
+const { warningLog, parseFromEnvFile, spinner } = require('./utils');
 const { getFileList, readFile } = require('./files');
 
 const { spawn } = require('child_process');
 
-// const Spinner = CLI.Spinner;
-
 const form = require('./form');
-
-// const status = new Spinner('Authenticating you, please wait...');
-
-// const authSpinner = {
-//     start: () => {
-//         status.start();
-//         process.stdout.write('\n');
-//     },
-//     stop: () => {
-//         status.stop();
-//         process.stdout.write('\n');
-//     }
-// };
 
 const removeNowToken = nowToken => async name => {
     return new Promise((resolve, reject) => {
@@ -73,9 +57,11 @@ const checkForAuthentication = async () => {
  * @param {Array} tokens
  */
 const updateMultipleNowTokens = async tokens => {
+    const initialSpinner = new spinner('Updating Now tokens');
+    initialSpinner.start();
     const nowToken = await getNowToken();
     let tokensToOverWrite = [];
-    const results = await Promise.all(
+    await Promise.all(
         tokens.map(async token => {
             try {
                 return await updateNowSecret(nowToken)(token);
@@ -86,6 +72,8 @@ const updateMultipleNowTokens = async tokens => {
         })
     );
 
+    initialSpinner.stop();
+
     if (tokensToOverWrite.length) {
         const { response } = await form.askToSelectCheckboxes(
             "The following env variable(s) already exist. Select the ones you'd like to overwrite:",
@@ -93,6 +81,9 @@ const updateMultipleNowTokens = async tokens => {
         );
 
         if (!response.length) return true;
+
+        const overwriteSpinner = new spinner('Overwriting tokens');
+        overwriteSpinner.start();
 
         //delete all tokens from Now
         await Promise.all(
@@ -119,6 +110,7 @@ const updateMultipleNowTokens = async tokens => {
                 }
             })
         );
+        overwriteSpinner.stop();
     }
     return true;
 };

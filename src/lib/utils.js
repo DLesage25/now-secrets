@@ -1,5 +1,5 @@
 'use strict';
-
+const CLI = require('clui');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 
@@ -11,6 +11,22 @@ const camelize = str => {
 const warningLog = str => console.log(chalk.yellow(`--- ${str}`));
 const successLog = str => console.log(chalk.green(`--- ${str}`));
 const errorLog = str => console.log(chalk.red(`--- ${str}`));
+
+const Spinner = CLI.Spinner;
+
+class spinner {
+    constructor(loadingText) {
+        this.spinnerInstance = new Spinner(loadingText);
+        this.start = () => {
+            this.spinnerInstance.start();
+            process.stdout.write('\n');
+        };
+        this.stop = () => {
+            this.spinnerInstance.stop();
+            process.stdout.write('\n');
+        };
+    }
+}
 
 class loader {
     constructor(loadingText, stream) {
@@ -36,11 +52,18 @@ class loader {
     }
 }
 
+const parseFromEnvFile = envFileData =>
+    envFileData.split('\n').map(string => ({
+        key: string.split('=')[0],
+        value: string.split('=')[1]
+    }));
+
 module.exports = {
     camelize,
     warningLog,
     successLog,
     errorLog,
     loader,
+    spinner,
     parseFromEnvFile
 };
