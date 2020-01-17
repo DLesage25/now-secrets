@@ -23,9 +23,6 @@ const main = async () => {
     let { selectedFlow } = await form.mainMenu();
     selectedFlow = utils.camelize(selectedFlow);
     return await app[selectedFlow]();
-    // if (process.error)
-    //     return utils.errorLog(`Execution Failed: ${process.error}`)
-    // return utils.successLog('Execution finished successfully')
 };
 
 main();

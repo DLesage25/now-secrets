@@ -15,18 +15,15 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const literalPath = `${process.cwd()}/${filePath}`;
             fs.writeFile(literalPath, data, err => {
-                if (err) {
-                    reject({
-                        error: `Error while writting on ${filePath}: ${err}`
-                    });
-                }
+                if (err) reject(err);
                 resolve(true);
             });
         });
     },
     readFile: async filePath => {
         return new Promise((resolve, reject) => {
-            fs.readFile(filePath, 'utf8', (err, data) => {
+            const literalPath = `${process.cwd()}/${filePath}`;
+            fs.readFile(literalPath, 'utf8', (err, data) => {
                 if (err) reject(err);
                 resolve(data);
             });
