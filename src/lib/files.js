@@ -14,22 +14,29 @@ module.exports = {
     writeFile: async (filePath, data) => {
         return new Promise((resolve, reject) => {
             const literalPath = `${process.cwd()}/${filePath}`;
-            fs.writeFile(literalPath, data, (err) => {
+            fs.writeFile(literalPath, data, err => {
                 if (err) {
-                    reject({error: `Error while writting on ${filePath}: ${err}`});
+                    reject({
+                        error: `Error while writting on ${filePath}: ${err}`
+                    });
                 }
                 resolve(true);
             });
         });
     },
-    readFile: async (filePath) => {
+    readFile: async filePath => {
         return new Promise((resolve, reject) => {
-            fs.readFile(filePath, "utf8", (err, data) => {
-                if (err) {
-                    console.log(`Error while reading ${filePath}: ${err}`);
-                    reject(err);
-                }
-                resolve(data)
+            fs.readFile(filePath, 'utf8', (err, data) => {
+                if (err) reject(err);
+                resolve(data);
+            });
+        });
+    },
+    getFileList: async directory => {
+        return new Promise((resolve, reject) => {
+            fs.readdir(directory, (err, files) => {
+                if (err) reject(err);
+                resolve(files);
             });
         });
     }

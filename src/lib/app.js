@@ -1,6 +1,8 @@
 const now = require('./now');
 const manifold = require('./manifold');
 
+const { errorLog, successLog } = require('./utils');
+
 module.exports = {
     ImportFromManifoldIntoEnvFile: async () => {
         try {
@@ -9,17 +11,16 @@ module.exports = {
             await manifold.writeEnvsToFileFromManifold();
             return true;
         } catch (err) {
-            return err;
+            errorLog(err);
         }
     },
-    ImportFromNowIntoEnvFile: async () => {
-        const isLogged = await now.checkForAuthentication();
-
-        if (!isLogged) {
-            console.log('Please log in to Now and try again.');
-            process.exit(0);
+    UpdateNowFromEnvFile: async () => {
+        try {
+            await now.checkForAuthentication();
+            await now.getTokensAndUpdateNow();
+            successLog('Now secrets updated succesfully!');
+        } catch (e) {
+            errorLog(`Error when updating Now from Env file: ${e}`);
         }
-
-        console.log('worked ' + isLogged);
     }
 };
