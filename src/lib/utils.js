@@ -21,9 +21,12 @@ class spinner {
             this.spinnerInstance.start();
             process.stdout.write('\n');
         };
-        this.stop = () => {
+        this.stop = (data) => {
             this.spinnerInstance.stop();
-            process.stdout.write('\n');
+            if (data)
+                process.stdout.write(data);
+            else
+                process.stdout.write('\n');
         };
     }
 }
