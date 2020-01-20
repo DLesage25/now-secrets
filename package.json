@@ -30,6 +30,7 @@
         "inquirer": "^7.0.3",
         "lodash": "^4.17.15",
         "minimist": "^1.2.0",
+        "mock-fs": "^4.10.4",
         "mock-spawn": "^0.2.6",
         "now": "^16.7.3",
         "shelljs": "^0.8.3",

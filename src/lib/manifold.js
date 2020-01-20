@@ -21,7 +21,7 @@ const askForResource = () => {
             resolve(manifoldResource);
         })
         list.stderr.on('data', (data) => {
-            reject(data);
+            reject(data.toString());
         })
     })
 }
@@ -34,15 +34,24 @@ const askForResource = () => {
 const addEnvToResource = (env, resource) => {
     const [envName, envValue] = env.split('=');
     return new Promise((resolve, reject) => {
-        exec(`manifold config set ${envName}=${envValue} --resource ${resource}`, (code, stdout, stderr) => {
-            if (stderr !== '')
-                reject(stderr);
-            resolve(true);
+        const envSet = spawn('manifold', ['config', 'set', `${envName}=${envValue}`, '--resource', resource], { stdio: 'pipe' });
+
+        envSet.stdout.on('data', async (data) => {
+            resolve(true)
+        })
+        envSet.stderr.on('data', (data) => {
+            reject(data.toString());
         })
     })
 }
 
 module.exports = {
+    /**
+     * This functions have to be exported for
+     * testing purposes
+     */
+    askForResource,
+    addEnvToResource,
     /**
      * This function will help us log into manifold
      * and catch any error while doing so
@@ -104,24 +113,24 @@ module.exports = {
     writeEnvsToFileFromManifold: async () => {
         const { pathName } = await form.askForPath('Please enter the path you would like your env file to be stored at (including file name):', '.env');
         return new Promise((resolve, reject) => {
-            exec('manifold export', async (code, stdout, stderr) => {
-                if (stderr !== '')
-                    reject(stderr);
+            const exported = spawn('manifold', ['export'], { stdio: 'pipe' });
 
+            exported.stderr.on('data', (data) => {
+                reject(data.toString());
+            });
+
+            exported.stdout.on('data', async (data) => {
                 // preventing the export to have unnecessary line breaks
                 const cleansedExport = 
-                    stdout
+                    data
+                    .toString()
                     .split('\n')
                     .filter(env => env !== '').
                     join('\n');
                 
-                try {
                     await writeFile(pathName, cleansedExport)
                     resolve(true);
-                } catch (error) {
-                    reject(error);
-                }
-            })
+            });
         })
     },
     /**
@@ -137,13 +146,13 @@ module.exports = {
             try {
                 const envs = await readFile(pathName);
                 const resource = await askForResource();
-                //converting to array and filtering out comments
+                // converting to array and filtering out comments
                 const filteredOutEnvs = envs.split('\n').filter(string => string.charAt(0) !== '#');
-                await Promise.all(filteredOutEnvs.map(env => {
+                const result = await Promise.all(filteredOutEnvs.map(env => {
                     return addEnvToResource(env, resource);
                 }))
-                successLog(`Wrote ${filteredOutEnvs.length} envs into ${resource} successfully`)
-                resolve(true);
+                // successLog(`Wrote ${filteredOutEnvs.length} envs into ${resource} successfully`)
+                return resolve(result);
             } catch (error) {
                 reject(error);
             }
