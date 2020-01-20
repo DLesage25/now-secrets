@@ -8,9 +8,6 @@ module.exports = {
     directoryExists: filePath => {
         return fs.existsSync(filePath);
     },
-    createReplaceFile: name => {
-        return fs.openSync(name, 'w');
-    },
     writeFile: async (filePath, data) => {
         return new Promise((resolve, reject) => {
             const literalPath = `${process.cwd()}/${filePath}`;
