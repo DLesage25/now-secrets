@@ -31,30 +31,6 @@ class spinner {
     }
 }
 
-class loader {
-    constructor(loadingText, stream) {
-        warningLog(loadingText);
-        this.loader = [`/`, `|`, `\\`, `-`];
-        this.i = loader.length;
-        this.loadingBar = new inquirer.ui.BottomBar({
-            bottomBar: this.loader[this.i % 4]
-        });
-        this.refreshInterval = setInterval(() => {
-            this.loadingBar.updateBottomBar(this.loader[this.i++ % 4]);
-        }, 300);
-
-        stream.stdout.pipe(this.loadingBar.log);
-    }
-    // logging any stdin, stdout, stderr or what not text stream at the same time
-    // you call this end() function isn't necessary
-    // as this function will do it for you
-    // when firing updateBottomBar()
-    end(endingText) {
-        clearInterval(this.refreshInterval);
-        this.loadingBar.updateBottomBar(chalk.green(`--- ${endingText}\n`)); //emptying our BottomBar
-    }
-}
-
 const parseFromEnvFile = envFileData =>
     envFileData.split('\n').map(string => ({
         key: string.split('=')[0],
@@ -66,7 +42,6 @@ module.exports = {
     warningLog,
     successLog,
     errorLog,
-    loader,
     spinner,
     parseFromEnvFile
 };
