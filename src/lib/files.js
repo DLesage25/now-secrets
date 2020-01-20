@@ -26,9 +26,8 @@ module.exports = {
         });
     },
     getFileList: async directory => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             fs.readdir(directory, (err, files) => {
-                if (err) reject(err);
                 resolve(files);
             });
         });
