@@ -9,6 +9,9 @@ const validate = value => {
 };
 
 module.exports = {
+    //exporting this function for testing purposes
+    validate,
+    //---------------
     mainMenu: () => {
         const questions = [
             {
