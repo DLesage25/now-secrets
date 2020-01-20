@@ -2,15 +2,21 @@ const { exec, spawn } = require('child_process');
 
 const { writeFile, readFile } = require('./files');
 const form = require('./form');
-const { warningLog, successLog, loader } = require('./utils');
+const { warningLog, successLog, spinner } = require('./utils');
 
+/**
+ * This function will help us display a table
+ * with the available resources within the Manifold project
+ * this CLI is running on.
+ */
 const askForResource = () => {
     return new Promise((resolve, reject) => {
         const list = spawn('manifold', ['list'], { stdio: 'pipe' });
-        const loading = new loader('Getting available resources from Manifold', list)
+        const loading = new spinner('Getting available resources from Manifold')
+        loading.start();
 
         list.stdout.on('data', async (data) => {
-            loading.end('Finished getting available resources')
+            loading.stop(data);
             const { manifoldResource } = await form.askForResource();
             resolve(manifoldResource);
         })
@@ -20,6 +26,11 @@ const askForResource = () => {
     })
 }
 
+/**
+ * 
+ * @param {string} env - format: envName=envValue
+ * @param {string} resource - the selected manifold resource name
+ */
 const addEnvToResource = (env, resource) => {
     const [envName, envValue] = env.split('=');
     return new Promise((resolve, reject) => {
@@ -32,6 +43,10 @@ const addEnvToResource = (env, resource) => {
 }
 
 module.exports = {
+    /**
+     * This function will help us log into manifold
+     * and catch any error while doing so
+     */
     login: () => {
         return new Promise((resolve, reject) => {
             warningLog('Logging into Manifold')
@@ -59,6 +74,10 @@ module.exports = {
             });
         });
     },
+    /**
+     * This will help us switch to the user's PartnerHero environment
+     * within Manifold
+     */
     switchToProdEnv: () => {
         return new Promise((resolve, reject) => {
             warningLog('Switching to PartnerHero\'s environment')
@@ -70,6 +89,12 @@ module.exports = {
             })
         })
     },
+    /**
+     * This function will help us to:
+     * 1. Ask the user for a path on which he/she will like to write its env variables on
+     * 2. Export all of the manifold env variables present within the current process
+     * 3. Write them on the desired file
+     */
     writeEnvsToFileFromManifold: async () => {
         const { pathName } = await form.askForPath('Please enter the path you would like your env file to be stored at (including file name):', '.env');
         return new Promise((resolve, reject) => {
@@ -93,6 +118,13 @@ module.exports = {
             })
         })
     },
+    /**
+     * This function will help us to:
+     * 1. Ask the user for a path on which he/she has its env variables stored on
+     * 2. Read the desired file
+     * 3. Ask the user for the desired resource he/she will like to write the envs on
+     * 4. Add the envs to the desired manifold resources
+     */
     writeEnvsToManifoldFromFile: async () => {
         const { pathName } = await form.askForPath('Please enter the path of the file you would like us to get envs from:', '.env');
         return new Promise(async (resolve, reject) => {
