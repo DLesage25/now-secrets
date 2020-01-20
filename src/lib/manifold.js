@@ -1,4 +1,4 @@
-const { exec, spawn } = require('child_process');
+const { spawn } = require('child_process');
 
 const { writeFile, readFile } = require('./files');
 const form = require('./form');

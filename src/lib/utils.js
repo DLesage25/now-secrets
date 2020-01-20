@@ -1,7 +1,6 @@
 'use strict';
 const CLI = require('clui');
 const chalk = require('chalk');
-const inquirer = require('inquirer');
 
 const camelize = str => {
     str = str.replace(/[0-9]/g, '');
