@@ -81,12 +81,18 @@ module.exports = {
     switchToProdEnv: () => {
         return new Promise((resolve, reject) => {
             warningLog('Switching to PartnerHero\'s environment')
-            exec('manifold switch partnerhero', (code, stdout, stderr) => {
-                if (stderr !== '')
-                    reject(stderr);
-                successLog('Switched to PartnerHero\'s snvironment successfully')
-                resolve(true);
-            })
+            const switched = spawn('manifold', ['switch', 'partnerhero'], { stdio: 'pipe' });
+
+            switched.stderr.on('data', (data) => {
+                reject(data.toString());
+            });
+
+            switched.on('close', (code) => {
+                if (code === 0) {
+                    successLog('Switched to PartnerHero\'s environment successfully')
+                    resolve(true);
+                }
+            });
         })
     },
     /**

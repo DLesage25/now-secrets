@@ -1,5 +1,5 @@
 describe('Files.js', () => {
-    let myFunctions = require('../src/lib/files');
+    let myFunctions = require('../../../src/lib/files');
 
     describe('getCurrentDirectoryBase', () => {
         it('should return the current working directory', () => {
