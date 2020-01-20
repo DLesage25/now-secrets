@@ -36,11 +36,19 @@ const parseFromEnvFile = envFileData =>
         value: string.split('=')[1]
     }));
 
+const cleanseManifoldExport = data => 
+    data
+    .toString()
+    .split('\n')
+    .filter(env => env !== '')
+    .join('\n')
+
 module.exports = {
     camelize,
     warningLog,
     successLog,
     errorLog,
     spinner,
-    parseFromEnvFile
+    parseFromEnvFile,
+    cleanseManifoldExport
 };

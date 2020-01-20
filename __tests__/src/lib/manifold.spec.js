@@ -4,7 +4,7 @@ const mockFs = require('mock-fs');
 require('child_process').spawn = mockedSpawn;
 
 describe('manifold.js', () => {
-    let manifold = require('../../../src/lib/manifold');
+    const manifold = require('../../../src/lib/manifold');
 
     describe('login', () => {
 

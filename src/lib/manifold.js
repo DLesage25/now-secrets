@@ -2,7 +2,7 @@ const { spawn } = require('child_process');
 
 const { writeFile, readFile } = require('./files');
 const form = require('./form');
-const { warningLog, successLog, spinner } = require('./utils');
+const { warningLog, successLog, spinner, cleanseManifoldExport } = require('./utils');
 
 /**
  * This function will help us display a table
@@ -120,16 +120,8 @@ module.exports = {
             });
 
             exported.stdout.on('data', async (data) => {
-                // preventing the export to have unnecessary line breaks
-                const cleansedExport = 
-                    data
-                    .toString()
-                    .split('\n')
-                    .filter(env => env !== '').
-                    join('\n');
-                
-                    await writeFile(pathName, cleansedExport)
-                    resolve(true);
+                await writeFile(pathName, cleanseManifoldExport(data))
+                resolve(true);
             });
         })
     },
