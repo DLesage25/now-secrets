@@ -7,9 +7,9 @@ const camelize = str => {
     return str.replace(/\W+(.)/g, (match, chr) => chr.toUpperCase());
 };
 
-const warningLog = str => console.log(chalk.yellow(`--- ${str}`));
-const successLog = str => console.log(chalk.green(`--- ${str}`));
-const errorLog = str => console.log(chalk.red(`--- ${str}`));
+const warningLog = str => process.stdout.write(chalk.yellow(`--- ${str}\n`));
+const successLog = str => process.stdout.write(chalk.green(`--- ${str}\n`));
+const errorLog = str => process.stdout.write(chalk.red(`--- ${str}\n`));
 
 const Spinner = CLI.Spinner;
 
@@ -36,12 +36,12 @@ const parseFromEnvFile = envFileData =>
         value: string.split('=')[1]
     }));
 
-const cleanseManifoldExport = data => 
+const cleanseManifoldExport = data =>
     data
-    .toString()
-    .split('\n')
-    .filter(env => env !== '')
-    .join('\n')
+        .toString()
+        .split('\n')
+        .filter(env => env !== '')
+        .join('\n')
 
 module.exports = {
     camelize,
