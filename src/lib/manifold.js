@@ -79,6 +79,8 @@ module.exports = {
                 if (code === 0) {
                     successLog('Logged into Manifold successfully')
                     resolve(true)
+                } else {
+                    reject('Error while logging in')
                 }
             });
         });
@@ -100,6 +102,8 @@ module.exports = {
                 if (code === 0) {
                     successLog('Switched to PartnerHero\'s environment successfully')
                     resolve(true);
+                } else {
+                    reject('Error while switching to prod env')
                 }
             });
         })
@@ -122,6 +126,14 @@ module.exports = {
             exported.stdout.on('data', async (data) => {
                 await writeFile(pathName, cleanseManifoldExport(data))
                 resolve(true);
+            });
+
+            exported.on('close', (code) => {
+                if (code === 0) {
+                    resolve(true);
+                } else {
+                    reject('Error while switching to prod env')
+                }
             });
         })
     },
