@@ -1,6 +1,6 @@
-describe('Files.js', () => {
-    let myFunctions = require('../../../src/lib/files');
+const myFunctions = require('../../../src/lib/files');
 
+describe('Files.js', () => {
     describe('getCurrentDirectoryBase', () => {
         it('should return the current working directory', () => {
             expect(myFunctions.getCurrentDirectoryBase()).toEqual(

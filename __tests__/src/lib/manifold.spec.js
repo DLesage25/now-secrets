@@ -3,8 +3,9 @@ const inquirer = require('inquirer')
 const mockFs = require('mock-fs');
 require('child_process').spawn = mockedSpawn;
 
+const manifold = require('../../../src/lib/manifold');
+
 describe('manifold.js', () => {
-    const manifold = require('../../../src/lib/manifold');
 
     describe('login', () => {
 
@@ -176,7 +177,7 @@ describe('manifold.js', () => {
     })
 
     describe('writeEnvsToManifoldFromFile', () => {
-        it ('should write envs to manifold from file', async () => {
+        it('should write envs to manifold from file', async () => {
             inquirer.prompt = () => Promise.resolve({
                 pathName: '.path',
                 manifoldResource: 'testResource'
@@ -198,7 +199,7 @@ describe('manifold.js', () => {
             mockFs.restore();
         })
 
-        it ('prevents writting envs if something breaks within the process', async () => {
+        it('prevents writting envs if something breaks within the process', async () => {
             inquirer.prompt = () => Promise.resolve({
                 pathName: '.path',
                 manifoldResource: 'testResource'
