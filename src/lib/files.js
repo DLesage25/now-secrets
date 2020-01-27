@@ -9,10 +9,9 @@ module.exports = {
         return fs.existsSync(filePath);
     },
     writeFile: async (filePath, data) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const literalPath = `${process.cwd()}/${filePath}`;
             fs.writeFile(literalPath, data, err => {
-                if (err) reject(err);
                 resolve(true);
             });
         });
@@ -27,9 +26,8 @@ module.exports = {
         });
     },
     getFileList: async directory => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             fs.readdir(directory, (err, files) => {
-                if (err) reject(err);
                 resolve(files);
             });
         });

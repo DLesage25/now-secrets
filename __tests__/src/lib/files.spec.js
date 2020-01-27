@@ -5,6 +5,7 @@ jest.mock('fs');
 describe('Files.js', () => {
     let myFunctions = require('../../../src/lib/files');
 
+describe('Files.js', () => {
     describe('getCurrentDirectoryBase', () => {
         it('should return the current working directory', () => {
             expect(myFunctions.getCurrentDirectoryBase()).toEqual(
@@ -79,6 +80,6 @@ describe('Files.js', () => {
             await myFunctions.getFileList('test').catch(e => {
                 expect(e).toEqual('error');
             });
-        });
+});
     });
 });
